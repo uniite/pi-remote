@@ -33,5 +33,5 @@ echo TIVO_HOST=1.2.3.4 > /etc/sysconfig/pi-remote
 cp /opt/pi-remote/config/udev.rules /etc/udev/rules.d/50-tivo-usb.rules
 
 # Reboot
-sudo reboot
+reboot
 ```
