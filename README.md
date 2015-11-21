@@ -23,6 +23,7 @@ chown -R pi-remote:pi-remote /opt/pi-remote
 # Install a systemd service to run pi-remote at startup
 cp /opt/pi-remote/config/pi-remote.service /etc/systemd/system
 chown root:root /etc/systemd/system/pi-remote.service
+systemctl enable pi-remote
 
 # Configure the IP/hostname of TiVo you want to control
 mkdir -p /etc/sysconfig
