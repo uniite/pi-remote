@@ -168,7 +168,3 @@ def process_hid_events():
             # If we find a stream marker, the next line must contain the key press
             if ':STREAM' in line:
                 state = 'keypress'
-
-
-if __name__ == '__main__':
-    process_hid_events()

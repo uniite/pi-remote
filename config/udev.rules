@@ -1,0 +1,1 @@
+SUBSYSTEM=="usb", ATTRS{idVendor}=="150a", ATTRS{idProduct}=="1203", GROUPS="tivo-usb"
