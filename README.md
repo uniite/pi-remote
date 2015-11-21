@@ -21,11 +21,11 @@ mv /tmp/pi-remote /opt/pi-remote
 chown -R pi-remote:pi-remote /opt/pi-remote
 
 # Install a systemd service to run pi-remote at startup
-cd /opt/pi-remote/config
-cp /opt/pi-remote/config/pi-remote.service /lib/systemd/system/
-chown root:root /lib/systemd/system/pi-remote.service
+cp /opt/pi-remote/config/pi-remote.service /etc/systemd/system
+chown root:root /etc/systemd/system/pi-remote.service
 
 # Configure the IP/hostname of TiVo you want to control
+mkdir -p /etc/sysconfig
 echo TIVO_HOST=1.2.3.4 > /etc/sysconfig/pi-remote
 
 # Configure udev to allow access to the TiVo USB remote dongle
