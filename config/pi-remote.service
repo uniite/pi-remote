@@ -1,7 +1,6 @@
 [Unit]
 Description=pi-remote Server
-Wants=network-online.target
-After=network-online.target
+After=network.target
 
 [Service]
 Type=simple
@@ -12,6 +11,8 @@ WorkingDirectory=/opt/pi-remote
 ExecStart=/opt/pi-remote/server.py
 StandardOutput=syslog+console
 StandardError=syslog+console
+Restart=always
+RestartSec=3
 
 [Install]
 WantedBy=multi-user.target
