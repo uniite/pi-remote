@@ -6,33 +6,31 @@ Just setup LIRC on your raspberry PI with the appropriate profile, and plug in a
 
 
 ## Installation
-
-As root (`sudo -i`):
 ```bash
+# Switch to root
+sudo -i
+
 # Add users and groups for the USB receiver and our script
 useradd pi-remote
 groupadd tivo-usb
 useradd -G tivo-usb pi-remote
 
 # Install pi-remote to /opt
-mkdir -p /opt/pi-remote
-chown pi-remote /opt/pi-remote
-```
+sudo -u pi-remote bash -c 'cd /tmp && git clone https://github.com/uniite/pi-remote.git'
+mv /tmp/pi-remote /opt/pi-remote
+chown -R pi-remote:pi-remote /opt/pi-remote
 
-As pi-remote user (`sudo -iu pi-remote`)
-```bash
-cd /opt/pi-remote
-git clone https://github.com/uniite/pi-remote.git src
-mv src/* src/.git .
-rm -r src
-```
+# Install a systemd service to run pi-remote at startup
+cd /opt/pi-remote/config
+cp /opt/pi-remote/config/pi-remote.service /lib/systemd/system/
+chown root:root /lib/systemd/system/pi-remote.service
 
-As root:
-```bash
-# Install init/upstart job to run pi-remote at startup
-sudo cp /opt/pi-remote/config/upstart.conf /etc/init/pi-remote.conf
-sudo chown root:root /etc/init/pi-remote.conf
-sudo cp /opt/pi-remote/config/udev.rules /etc/udev/rules.d/50-tivo-usb.rules
-```
+# Configure the IP/hostname of TiVo you want to control
+echo TIVO_HOST=1.2.3.4 > /etc/sysconfig/pi-remote
 
-Reboot (`sudo reboot`)
+# Configure udev to allow access to the TiVo USB remote dongle
+cp /opt/pi-remote/config/udev.rules /etc/udev/rules.d/50-tivo-usb.rules
+
+# Reboot
+sudo reboot
+```

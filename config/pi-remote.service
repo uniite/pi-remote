@@ -1,0 +1,15 @@
+[Unit]
+Description=pi-remote Server
+After=network.target
+
+[Service]
+Type=simple
+User=pi-remote
+Group=tivo-usb
+EnvironmentFile=/etc/sysconfig/pi-remote
+WorkingDirectory=/opt/pi-remote
+ExecStart=/opt/pi-remote/server.py
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

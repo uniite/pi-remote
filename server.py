@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from tivo_hid_remote import process_hid_events
 
 
