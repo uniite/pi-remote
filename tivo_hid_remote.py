@@ -1,6 +1,7 @@
-#import gevent
+import json
 import os
 from subprocess import Popen, PIPE
+from cec_client import CecClient
 from tivo_tcp_client import TivoClient
 
 USBHID_DUMP_CMD = 'usbhid-dump --entity=stream --model=150a:1203 --stream-timeout=0'
@@ -133,8 +134,14 @@ def lirc_irsend(command):
 def speaker_send(command):
     lirc_irsend('logitech_z5500 %s' % command)
 
+def load_config():
+    with open('/etc/pi-remote.json', 'r') as f:
+        return json.loads(f.read())
+
 def process_hid_events():
-    client = TivoClient()
+    config = load_config()
+    client = TivoClient(config['tivo_host'])
+    cec_client = CecClient(config['inputs'])
     client.connect()
     usbhid_dump = Popen(USBHID_DUMP_CMD, stdout=PIPE, shell=True)
     state = None
@@ -145,6 +152,9 @@ def process_hid_events():
             key_codes = parse_keypress(line)
             command = process_keypress(key_codes)
             print command
+            # TiVo button always switches back to TiVo
+            if command == 'TIVO':
+                cec_client.change_input(0)
             # These are commands that are meant for controlling other devices
             # (normally by programming the buttons with different IR codes)
             if command and command.startswith(CUSTOM_PREFIX):
@@ -159,6 +169,9 @@ def process_hid_events():
                 speaker_cmd = TIVO_TO_SPEAKER_MAPPING.get(command)
                 if speaker_cmd:
                     speaker_send(speaker_cmd)
+                # Some are also useful for forwarding to the HDMI CEC bus
+                if command == 'TVINPUT':
+                    cec_client.change_input()
             # Regular TV commnads get sent straight to the TiVo
             else:
                 client.send_ircode(command)
